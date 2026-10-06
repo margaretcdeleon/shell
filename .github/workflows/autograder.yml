@@ -8,6 +8,14 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  # Read repository contents for checkout and grading.
+  contents: read
+  # Pull request comments use the Issues API.
+  issues: write
+  # Required to create REQUEST_CHANGES reviews when checks fail.
+  pull-requests: write
+
 jobs:
   autograder:
     name: Assignment autograder
@@ -21,10 +29,10 @@ jobs:
           UUID=$(uuidgen)
           echo "UUID=$UUID" >> $GITHUB_ENV
           mkdir /tmp/$UUID
-          cp $GITHUB_WORKSPACE/02_activities/assignments/assignment.sh /tmp/$UUID
+          cp $GITHUB_WORKSPACE/02_activities/assignments/assignment_script.sh /tmp/$UUID
       - name: Run assignment script
         run: |
-          bash -c "bash assignment.sh 2>&1 | tee /tmp/${{ env.UUID }}_output.txt"
+          bash -c "bash assignment_script.sh 2>&1 | tee /tmp/${{ env.UUID }}_output.txt"
         working-directory: /tmp/${{ env.UUID }}
       - name: Grade responses
         id: grade
